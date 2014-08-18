@@ -3,7 +3,7 @@ open System.Net
 open System.Text
 open System.IO
 
-let siteRoot = @"."
+let siteRoot = @"static"
 let host = "http://localhost:8080/"
 
 let createListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<unit>)) =
@@ -17,13 +17,16 @@ let createListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<un
             Async.Start(handler context.Request context.Response)
     } |> Async.Start
 
-let handleStaticFile path =
+let rec handleStaticFile path =
     // Force it relative by adding "." in front:
     let file = Path.Combine(siteRoot, "." + path)
     printfn "Static file: %s" file
-    if (File.Exists file)
-        then (200, "text/html", File.ReadAllText(file))
-        else (404, "text/plain", "File does not exist!")
+    if (Directory.Exists file)
+        // XXX If ends with /, find, otherwise redirect.
+        then handleStaticFile (path + "/index.html")
+        elif (File.Exists file)
+            then (200, "text/html", File.ReadAllText(file))
+            else (404, "text/plain", "File does not exist!")
 
 // Removes possible ? and subsequent text.
 let stripQuery (path:string) =
@@ -38,9 +41,33 @@ let notNullString (s:string) =
         then ""
         else s
 
+type SearchResponse = {
+    Query: string
+    Text: string
+}
+
+// Escape a JSON string.
+let escapeJson (s:string) =
+    s.Replace("\\", "\\\\").
+        Replace("\"", "\\\"").
+        Replace("/", "\\/").
+        Replace("\b", "\\b").
+        Replace("\n", "\\n").
+        Replace("\r", "\\r").
+        Replace("\t", "\\t")
+
+// Convert a response to JSON.
+let makeJsonSearchResponse (response:SearchResponse) =
+    @"{""query"":""" + escapeJson response.Query +
+        @""", ""text"":""" + escapeJson response.Text + @"""}"
+
 let handleSearch query =
     printfn "Query: %s" query
-    (200, "text/html", query)
+    let response = {
+        Query = query
+        Text = "Hey hey"
+    }
+    (200, "application/json", makeJsonSearchResponse response)
 
 let handleGetRequest (req:HttpListenerRequest) =
     let path = stripQuery req.RawUrl

@@ -32,7 +32,6 @@ To do:
             - Request
                 - referer=referring query ID.
                 - helped=0 or 1 for whether it helped.
-    - RESTful.
     - JSON response.
 - Design database schema.
 - Figure out PostgreSQL interface from F#.
