@@ -1,0 +1,45 @@
+
+To do:
+
+- Design website UI.
+    - Title
+        - OurGroceries Help
+    - Short explanation of what to do.
+        - Ask a brief question below and the system will attempt to answer it for you.
+    - Example queries.
+        - "categorize my list", "make recipe", "share list", "problem not sharing".
+    - Text input box.
+    - Answer to the question (may be missing).
+    - List of related questions.
+    - Did this help? Yes/No.
+- Design web API.
+    - Operations:
+        - GET /search
+            - Request:
+                - q=question
+                - referer=referring query ID
+            - Response:
+                - {
+                    "id": "query ID",
+                    "query": "original query",
+                    "responseId": "responseId",
+                    "text": "Markdown text or null if not found",
+                    "related: [
+                        "List of related queries"
+                    ]
+                  }
+        - POST /search
+            - Request
+                - referer=referring query ID.
+                - helped=0 or 1 for whether it helped.
+    - RESTful.
+    - JSON response.
+- Design database schema.
+- Figure out PostgreSQL interface from F#.
+    - Or use some simpler database, since we really just need name/value pairs.
+- Implement sample web UI, serving static HTML.
+    - Use JS-side Markdown renderer.
+        - If this sucks, then render on server and change API to return HTML.
+- Implement web API. Hard-code DB.
+- Add DB support.
+
