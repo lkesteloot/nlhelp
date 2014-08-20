@@ -2,22 +2,11 @@ open System
 open System.Net
 open System.Text
 open System.IO
+open System.Data
 open Npgsql
 
 let staticRoot = @"static"
 let host = "http://localhost:8080/"
-
-// Register a listener for HTTP requests.
-let registerListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<unit>)) =
-    let hl = new HttpListener()
-    hl.Prefixes.Add host
-    hl.Start()
-    let task = Async.FromBeginEnd(hl.BeginGetContext, hl.EndGetContext)
-    async {
-        while true do
-            let! context = task
-            Async.Start(handler context.Request context.Response)
-    } |> Async.Start
 
 // Converts a null string to an empty string.
 let notNullString = function
@@ -44,6 +33,88 @@ let stripQuery (path:string) =
 let handleRedirection path =
     printfn "Redirecting to %s" path
     (int HttpStatusCode.Redirect, "", path)
+
+// Database methods.
+module Db =
+    let private executeCommand (dbcon:IDbConnection) command =
+        let dbcmd = dbcon.CreateCommand()
+        dbcmd.CommandText <- command
+        dbcmd.ExecuteNonQuery() |> ignore
+
+    // Numbered from 1.
+    let upgrades = [
+        fun dbcon -> () // 1
+        fun dbcon -> // 2
+            executeCommand dbcon "CREATE TABLE answer ( \
+                                      id serial PRIMARY KEY, \
+                                      answer_text text NOT NULL \
+                                  )"
+            executeCommand dbcon "CREATE TABLE question ( \
+                                      id serial PRIMARY KEY, \
+                                      question_text text NOT NULL, \
+                                      answer_id integer NOT NULL REFERENCES answer ON DELETE CASCADE
+
+                                  )"
+    ]
+
+    let private queryInteger (dbcon:IDbConnection) query =
+        let dbcmd = dbcon.CreateCommand()
+        dbcmd.CommandText <- query
+        int (dbcmd.ExecuteScalar() :?> Int32)
+
+    let private addParameter (dbcmd:IDbCommand) name value =
+        let param = dbcmd.CreateParameter()
+        param.ParameterName <- name
+        param.Value <- value
+        dbcmd.Parameters.Add(param) |> ignore
+
+    let private addSchemaTrackerVersion (dbcon:IDbConnection) upgradeId =
+        let dbcmd = dbcon.CreateCommand()
+        dbcmd.CommandText <- "INSERT INTO schema_tracker VALUES (@Id, @Description)"
+        addParameter dbcmd "Id" upgradeId
+        addParameter dbcmd "Description" "No description"
+        dbcmd.ExecuteNonQuery() |> ignore
+
+    let private applyUpgrade (dbcon:IDbConnection) (upgradeId, upgrade) =
+        printfn "Apply schema upgrade %d" upgradeId
+        // Do this in a transaction so that if our DDL commands are wrong, we don't
+        // have to clean up while debugging.
+        let dbtx = dbcon.BeginTransaction()
+        upgrade dbcon
+        addSchemaTrackerVersion dbcon upgradeId
+        dbtx.Commit()
+
+    let private createTables (dbcon:IDbConnection) =
+        // Create the schema tracker if it doesn't yet exist.
+        try
+            // This will throw if it already exists.
+            executeCommand dbcon "CREATE TABLE schema_tracker ( \
+                                      id integer, \
+                                      description text \
+                                  )"
+            // If we created the table, then seed it.
+            executeCommand dbcon "INSERT INTO schema_tracker VALUES (1, 'Empty schema')"
+        with
+        | :? Npgsql.NpgsqlException -> ()
+
+        let schemaVersion = queryInteger dbcon "SELECT max(id) FROM schema_tracker"
+        printfn "Schema version: %d" schemaVersion
+
+        // Apply all the upgrades that we've not done yet.
+        upgrades
+            |> Seq.zip [1 .. (List.length upgrades)]
+            |> Seq.skip schemaVersion
+            |> Seq.iter (applyUpgrade dbcon)
+
+    // % sudo -u postgres psql
+    // postgres=# create role nlhelp nosuperuser nocreatedb nocreaterole inherit login;
+    // postgres=# create database nlhelp owner nlhelp encoding 'unicode';
+    let private connectionString = "Server=localhost;Database=nlhelp;User ID=nlhelp"
+    let makeConnection =
+        let dbcon = new NpgsqlConnection(connectionString)
+        dbcon.Open()
+        createTables dbcon
+        dbcon
 
 // Handling of static files.
 module Static =
@@ -90,7 +161,7 @@ module Search =
             @""", ""text"":""" + escapeJson response.Text + @"""}"
 
     // Handle queries to the /search URL.
-    let handleRequest query =
+    let handleRequest dbcon query =
         printfn "Query: %s" query
         let response = {
             Query = query
@@ -100,15 +171,15 @@ module Search =
 
 module Website =
     // Handle GET requests.
-    let private handleGetRequest (req:HttpListenerRequest) =
+    let private handleGetRequest dbcon (req:HttpListenerRequest) =
         match stripQuery req.RawUrl with
-        | "/search" -> Search.handleRequest (notNullString (req.QueryString.Get("q")))
+        | "/search" -> Search.handleRequest dbcon (notNullString (req.QueryString.Get("q")))
         | path -> Static.handleRequest path
 
     // Generic request handler.
-    let handleRequest (req:HttpListenerRequest) =
+    let handleRequest dbcon (req:HttpListenerRequest) =
         match req.HttpMethod.ToUpper() with
-        | "GET" -> handleGetRequest req
+        | "GET" -> handleGetRequest dbcon req
         | _ -> (405, "text/plain", "Method not allowed")
 
 module Http =
@@ -126,10 +197,22 @@ module Http =
         resp.Redirect(location)
         resp.OutputStream.Close()
 
-    // Listen for requests and create a response.
-    let listener req resp =
+    // Register a listener for HTTP requests.
+    let registerListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<unit>)) =
+        let hl = new HttpListener()
+        hl.Prefixes.Add host
+        hl.Start()
+        let task = Async.FromBeginEnd(hl.BeginGetContext, hl.EndGetContext)
         async {
-            let statusCode, contentType, body = Website.handleRequest req
+            while true do
+                let! context = task
+                Async.Start(handler context.Request context.Response)
+        } |> Async.Start
+
+    // Listen for requests and create a response.
+    let listener dbcon req resp =
+        async {
+            let statusCode, contentType, body = Website.handleRequest dbcon req
             printfn "%d %s %s" statusCode contentType req.RawUrl
             if statusCode >= 300 && statusCode < 400
                 then redirectTo resp body
@@ -138,6 +221,8 @@ module Http =
 
 [<EntryPoint>]
 let main argv =
-    registerListener Http.listener
+    let dbcon = Db.makeConnection
+    Http.registerListener (Http.listener dbcon)
     Console.ReadLine() |> ignore
+    dbcon.Close()
     0

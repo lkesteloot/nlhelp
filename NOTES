@@ -1,7 +1,16 @@
 
 To do:
 
-- Get DB from file? Or skip this step?
+- Add a bunch of sample questions and answers.
+    - Bulk-add these from a text file so that we can reproduce it easily.
+- Look up question in search.
+    - Return DB answer.
+- Mess with nicer DB interface that uses query{}.
+    - http://www.mono-project.com/docs/database-access/providers/postgresql/
+    - http://fsprojects.github.io/SQLProvider/
+
+------------------------------------------------------------------------------------------
+
 - Design website UI.
     - Title
         - OurGroceries Help
@@ -13,6 +22,7 @@ To do:
     - Answer to the question (may be missing).
     - List of related questions.
     - Did this help? Yes/No.
+
 - Design web API.
     - Operations:
         - GET /search
@@ -33,11 +43,3 @@ To do:
             - Request
                 - referer=referring query ID.
                 - helped=0 or 1 for whether it helped.
-    - JSON response.
-- Design database schema.
-- Figure out PostgreSQL interface from F#.
-    - http://www.mono-project.com/docs/database-access/providers/postgresql/
-    - http://fsprojects.github.io/SQLProvider/
-    - Or use some simpler database, since we really just need name/value pairs.
-- Implement web API. Hard-code DB.
-- Add DB support.
