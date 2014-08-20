@@ -1,3 +1,5 @@
+// Copyright 2014 Lawrence Kesteloot
+
 open System
 open System.Net
 open System.Text

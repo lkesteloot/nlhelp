@@ -1,5 +1,5 @@
 
-APP=program
+APP=nlhelp
 
 run: $(APP).exe
 	mono $(APP).exe
