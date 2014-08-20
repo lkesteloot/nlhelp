@@ -23,7 +23,7 @@
                     console.log("Error");
                 },
                 success: function (data) {
-                    $answer.html(markdown.toHTML(data.text));
+                    $answer.html(markdown.toHTML(data.text)).show();
                 }
             });
         });
