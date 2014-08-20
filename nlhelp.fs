@@ -59,17 +59,22 @@ module Db =
                                   )"
     ]
 
+    // Takes a query that should return one row with one column, where
+    // the single cell is an integer, and returns that integer.
     let private queryInteger (dbcon:IDbConnection) query =
         let dbcmd = dbcon.CreateCommand()
         dbcmd.CommandText <- query
         int (dbcmd.ExecuteScalar() :?> Int32)
 
+    // Add a parameter to a command. Call this for every "@Param" in the query.
+    // Do not include the "@" in the name.
     let private addParameter (dbcmd:IDbCommand) name value =
         let param = dbcmd.CreateParameter()
         param.ParameterName <- name
         param.Value <- value
         dbcmd.Parameters.Add(param) |> ignore
 
+    // Add a row to the schema tracker with the specified version number.
     let private addSchemaTrackerVersion (dbcon:IDbConnection) upgradeId =
         let dbcmd = dbcon.CreateCommand()
         dbcmd.CommandText <- "INSERT INTO schema_tracker VALUES (@Id, @Description)"
@@ -77,6 +82,8 @@ module Db =
         addParameter dbcmd "Description" "No description"
         dbcmd.ExecuteNonQuery() |> ignore
 
+    // Apply the specified upgrade. The ID is the number, and "upgrade" is
+    // a function that takes a connection and applies an upgrade.
     let private applyUpgrade (dbcon:IDbConnection) (upgradeId, upgrade) =
         printfn "Apply schema upgrade %d" upgradeId
         // Do this in a transaction so that if our DDL commands are wrong, we don't
