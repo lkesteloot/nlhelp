@@ -94,7 +94,7 @@ module Search =
         printfn "Query: %s" query
         let response = {
             Query = query
-            Text = "Hey hey"
+            Text = "# Official answer\nYou are clearly *stupid*."
         }
         (200, "application/json", makeJsonSearchResponse response)
 

@@ -1,8 +1,6 @@
 
 To do:
 
-- Convert response from Markdown.
-    - https://github.com/evilstreak/markdown-js
 - Nicer CSS.
 - Get DB from file? Or skip this step?
 - Design website UI.
@@ -44,4 +42,3 @@ To do:
     - Or use some simpler database, since we really just need name/value pairs.
 - Implement web API. Hard-code DB.
 - Add DB support.
-
