@@ -1,6 +1,13 @@
 
 To do:
 
+- Import jQuery in website.
+- Make form submission AJAX.
+- Show response in web page.
+- Convert response from Markdown.
+    - https://github.com/evilstreak/markdown-js
+- Nicer CSS.
+- Get DB from file? Or skip this step?
 - Design website UI.
     - Title
         - OurGroceries Help
@@ -35,10 +42,9 @@ To do:
     - JSON response.
 - Design database schema.
 - Figure out PostgreSQL interface from F#.
+    - http://www.mono-project.com/docs/database-access/providers/postgresql/
+    - http://fsprojects.github.io/SQLProvider/
     - Or use some simpler database, since we really just need name/value pairs.
-- Implement sample web UI, serving static HTML.
-    - Use JS-side Markdown renderer.
-        - If this sucks, then render on server and change API to return HTML.
 - Implement web API. Hard-code DB.
 - Add DB support.
 

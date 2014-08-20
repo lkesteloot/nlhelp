@@ -2,6 +2,7 @@ open System
 open System.Net
 open System.Text
 open System.IO
+open Npgsql
 
 let siteRoot = @"static"
 let host = "http://localhost:8080/"
@@ -17,34 +18,11 @@ let createListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<un
             Async.Start(handler context.Request context.Response)
     } |> Async.Start
 
-let rec handleStaticFile path =
-    // Force it relative by adding "." in front:
-    let file = Path.Combine(siteRoot, "." + path)
-    printfn "Static file: %s" file
-    if (Directory.Exists file)
-        // XXX If ends with /, find, otherwise redirect.
-        then handleStaticFile (path + "/index.html")
-        elif (File.Exists file)
-            then (200, "text/html", File.ReadAllText(file))
-            else (404, "text/plain", "File does not exist!")
-
-// Removes possible ? and subsequent text.
-let stripQuery (path:string) =
-    let index = path.IndexOf("?")
-    if index >= 0
-        then path.Substring(0, index)
-        else path
-
 // Converts a null string to an empty string.
 let notNullString (s:string) =
     if s = null
         then ""
         else s
-
-type SearchResponse = {
-    Query: string
-    Text: string
-}
 
 // Escape a JSON string.
 let escapeJson (s:string) =
@@ -56,38 +34,94 @@ let escapeJson (s:string) =
         Replace("\r", "\\r").
         Replace("\t", "\\t")
 
-// Convert a response to JSON.
-let makeJsonSearchResponse (response:SearchResponse) =
-    @"{""query"":""" + escapeJson response.Query +
-        @""", ""text"":""" + escapeJson response.Text + @"""}"
+// Removes possible ? and subsequent text.
+let stripQuery (path:string) =
+    let index = path.IndexOf("?")
+    if index >= 0
+        then path.Substring(0, index)
+        else path
 
-let handleSearch query =
-    printfn "Query: %s" query
-    let response = {
-        Query = query
-        Text = "Hey hey"
+// Returns a redirection.
+let handleRedirection path =
+    printfn "Redirecting to %s" path
+    (int HttpStatusCode.Redirect, "", path)
+
+// Handling of static files.
+module Static =
+    let private handleStaticFile (pathname:string) =
+        if (File.Exists pathname)
+            then (int HttpStatusCode.OK, "text/html", File.ReadAllText(pathname))
+            else (int HttpStatusCode.NotFound, "text/plain", "Page does not exist.")
+
+    let rec private handleStaticDirectory (path:string) =
+        if (path.EndsWith("/"))
+            then handleRequest (path + "index.html")
+            else handleRedirection (path + "/")
+
+    and handleRequest path =
+        // Force it relative by adding "." in front:
+        let pathname = Path.Combine(siteRoot, "." + path)
+        printfn "Static file: %s" pathname
+        if (Directory.Exists pathname)
+            then handleStaticDirectory path
+            else handleStaticFile pathname
+
+module Search =
+    type SearchResponse = {
+        Query: string
+        Text: string
     }
-    (200, "application/json", makeJsonSearchResponse response)
 
+    // Convert a response to JSON.
+    let makeJsonSearchResponse (response:SearchResponse) =
+        @"{""query"":""" + escapeJson response.Query +
+            @""", ""text"":""" + escapeJson response.Text + @"""}"
+
+    // Handle queries to the /search URL.
+    let handleRequest query =
+        printfn "Query: %s" query
+        let response = {
+            Query = query
+            Text = "Hey hey"
+        }
+        (200, "application/json", makeJsonSearchResponse response)
+
+// Handle GET requests.
 let handleGetRequest (req:HttpListenerRequest) =
     let path = stripQuery req.RawUrl
     printfn "Path: %s" path
     if path = "/search"
-        then handleSearch (notNullString (req.QueryString.Get("q")))
-        else handleStaticFile path
+        then Search.handleRequest (notNullString (req.QueryString.Get("q")))
+        else Static.handleRequest path
 
+// Generic request handler.
 let handleRequest (req:HttpListenerRequest) =
     if req.HttpMethod.ToUpper() <> "GET"
         then (405, "text/plain", "Method not allowed")
         else handleGetRequest req
 
-createListener (fun req resp ->
-    async {
-        let code, contentType, body = handleRequest req
-        let asciiBody = Encoding.ASCII.GetBytes(body)
-        resp.ContentType <- contentType
-        resp.OutputStream.Write(asciiBody, 0, asciiBody.Length)
-        resp.OutputStream.Close()
-    })
+// Write the response body.
+let writeBody (resp:HttpListenerResponse) (statusCode:int) (contentType:string) (body:string) =
+    let asciiBody = Encoding.ASCII.GetBytes(body)
+    resp.StatusCode <- statusCode
+    resp.ContentType <- contentType
+    resp.ContentLength64 <- int64 asciiBody.Length
+    resp.OutputStream.Write(asciiBody, 0, asciiBody.Length)
+    resp.OutputStream.Close()
 
-Console.ReadLine() |> ignore
+let redirectTo (resp:HttpListenerResponse) location =
+    resp.Redirect(location)
+    resp.OutputStream.Close()
+
+[<EntryPoint>]
+let main argv =
+    createListener (fun req resp ->
+        async {
+            let statusCode, contentType, body = handleRequest req
+            if statusCode >= 300 && statusCode < 400
+                then redirectTo resp body
+                else writeBody resp statusCode contentType body 
+        })
+
+    Console.ReadLine() |> ignore
+    0
