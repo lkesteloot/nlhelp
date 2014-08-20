@@ -2,7 +2,6 @@
 <html>
     <head>
         <title>OurGroceries Help</title>
-        <script src="js-1.11.1.js"></script>
     </head>
     <body>
         <h1>OurGroceries Help</h1>
@@ -13,11 +12,14 @@
         <p class="examples">"categorize my list", "make recipe",
         "share list", "problem not sharing"</p>
 
-        <form action="/search">
+        <form id="searchForm" action="/search">
             <input type="text" name="q">
             <button type="submit">Search</button>
         </form>
 
         <p class="answer"></p>
+
+        <script src="jquery-1.11.1.js"></script>
+        <script src="nlhelp.js"></script>
     </body>
 </html>

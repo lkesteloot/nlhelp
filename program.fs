@@ -48,9 +48,21 @@ let handleRedirection path =
 
 // Handling of static files.
 module Static =
+    let private detectMimeType (pathname:string) =
+        match (Path.GetExtension(pathname).ToLower()) with
+        | ".html" -> "text/html"
+        | ".js" -> "text/javascript" // "application/javascript" is better but IE chokes.
+        | ".css" -> "text/css"
+        | ".jpg" | ".jpeg" -> "image/jpeg"
+        | ".gif" -> "image/gif"
+        | ".png" -> "image/png"
+        | _ ->
+            printfn "WARNING: Unknown extension for file %s" pathname
+            "text/plain"
+
     let private handleStaticFile (pathname:string) =
         if (File.Exists pathname)
-            then (int HttpStatusCode.OK, "text/html", File.ReadAllText(pathname))
+            then (int HttpStatusCode.OK, detectMimeType pathname, File.ReadAllText(pathname))
             else (int HttpStatusCode.NotFound, "text/plain", "Page does not exist.")
 
     let rec private handleStaticDirectory (path:string) =
@@ -118,6 +130,7 @@ let main argv =
     createListener (fun req resp ->
         async {
             let statusCode, contentType, body = handleRequest req
+            printfn "%d %s %s" statusCode contentType req.RawUrl
             if statusCode >= 300 && statusCode < 400
                 then redirectTo resp body
                 else writeBody resp statusCode contentType body 

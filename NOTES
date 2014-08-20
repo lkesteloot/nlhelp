@@ -1,8 +1,6 @@
 
 To do:
 
-- Make form submission AJAX.
-- Show response in web page.
 - Convert response from Markdown.
     - https://github.com/evilstreak/markdown-js
 - Nicer CSS.
