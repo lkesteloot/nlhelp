@@ -4,10 +4,11 @@ open System.Text
 open System.IO
 open Npgsql
 
-let siteRoot = @"static"
+let staticRoot = @"static"
 let host = "http://localhost:8080/"
 
-let createListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<unit>)) =
+// Register a listener for HTTP requests.
+let registerListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<unit>)) =
     let hl = new HttpListener()
     hl.Prefixes.Add host
     hl.Start()
@@ -19,10 +20,9 @@ let createListener (handler:(HttpListenerRequest->HttpListenerResponse->Async<un
     } |> Async.Start
 
 // Converts a null string to an empty string.
-let notNullString (s:string) =
-    if s = null
-        then ""
-        else s
+let notNullString = function
+    | null -> ""
+    | s -> s
 
 // Escape a JSON string.
 let escapeJson (s:string) =
@@ -36,10 +36,9 @@ let escapeJson (s:string) =
 
 // Removes possible ? and subsequent text.
 let stripQuery (path:string) =
-    let index = path.IndexOf("?")
-    if index >= 0
-        then path.Substring(0, index)
-        else path
+    match path.IndexOf("?") with
+    | -1 -> path
+    | index -> path.Substring(0, index)
 
 // Returns a redirection.
 let handleRedirection path =
@@ -51,7 +50,7 @@ module Static =
     let private detectMimeType (pathname:string) =
         match (Path.GetExtension(pathname).ToLower()) with
         | ".html" -> "text/html"
-        | ".js" -> "text/javascript" // "application/javascript" is better but IE chokes.
+        | ".js" -> "text/javascript" // "application/javascript" is correct but chokes IE.
         | ".css" -> "text/css"
         | ".jpg" | ".jpeg" -> "image/jpeg"
         | ".gif" -> "image/gif"
@@ -72,12 +71,13 @@ module Static =
 
     and handleRequest path =
         // Force it relative by adding "." in front:
-        let pathname = Path.Combine(siteRoot, "." + path)
+        let pathname = Path.Combine(staticRoot, "." + path)
         printfn "Static file: %s" pathname
         if (Directory.Exists pathname)
             then handleStaticDirectory path
             else handleStaticFile pathname
 
+// Handling of search requests.
 module Search =
     type SearchResponse = {
         Query: string
@@ -98,43 +98,46 @@ module Search =
         }
         (200, "application/json", makeJsonSearchResponse response)
 
-// Handle GET requests.
-let handleGetRequest (req:HttpListenerRequest) =
-    let path = stripQuery req.RawUrl
-    printfn "Path: %s" path
-    if path = "/search"
-        then Search.handleRequest (notNullString (req.QueryString.Get("q")))
-        else Static.handleRequest path
+module Website =
+    // Handle GET requests.
+    let private handleGetRequest (req:HttpListenerRequest) =
+        match stripQuery req.RawUrl with
+        | "/search" -> Search.handleRequest (notNullString (req.QueryString.Get("q")))
+        | path -> Static.handleRequest path
 
-// Generic request handler.
-let handleRequest (req:HttpListenerRequest) =
-    if req.HttpMethod.ToUpper() <> "GET"
-        then (405, "text/plain", "Method not allowed")
-        else handleGetRequest req
+    // Generic request handler.
+    let handleRequest (req:HttpListenerRequest) =
+        match req.HttpMethod.ToUpper() with
+        | "GET" -> handleGetRequest req
+        | _ -> (405, "text/plain", "Method not allowed")
 
-// Write the response body.
-let writeBody (resp:HttpListenerResponse) (statusCode:int) (contentType:string) (body:string) =
-    let asciiBody = Encoding.ASCII.GetBytes(body)
-    resp.StatusCode <- statusCode
-    resp.ContentType <- contentType
-    resp.ContentLength64 <- int64 asciiBody.Length
-    resp.OutputStream.Write(asciiBody, 0, asciiBody.Length)
-    resp.OutputStream.Close()
+module Http =
+    // Write the response body.
+    let private writeBody (resp:HttpListenerResponse) (statusCode:int) (contentType:string) (body:string) =
+        let asciiBody = Encoding.ASCII.GetBytes(body)
+        resp.StatusCode <- statusCode
+        resp.ContentType <- contentType
+        resp.ContentLength64 <- int64 asciiBody.Length
+        resp.OutputStream.Write(asciiBody, 0, asciiBody.Length)
+        resp.OutputStream.Close()
 
-let redirectTo (resp:HttpListenerResponse) location =
-    resp.Redirect(location)
-    resp.OutputStream.Close()
+    // 302 Redirect to the location.
+    let private redirectTo (resp:HttpListenerResponse) location =
+        resp.Redirect(location)
+        resp.OutputStream.Close()
 
-[<EntryPoint>]
-let main argv =
-    createListener (fun req resp ->
+    // Listen for requests and create a response.
+    let listener req resp =
         async {
-            let statusCode, contentType, body = handleRequest req
+            let statusCode, contentType, body = Website.handleRequest req
             printfn "%d %s %s" statusCode contentType req.RawUrl
             if statusCode >= 300 && statusCode < 400
                 then redirectTo resp body
                 else writeBody resp statusCode contentType body 
-        })
+        }
 
+[<EntryPoint>]
+let main argv =
+    registerListener Http.listener
     Console.ReadLine() |> ignore
     0
