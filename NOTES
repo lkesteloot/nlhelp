@@ -1,8 +1,6 @@
 
 To do:
 
-- Add a bunch of sample questions and answers.
-    - Bulk-add these from a text file so that we can reproduce it easily.
 - Look up question in search.
     - Return DB answer.
 - Mess with nicer DB interface that uses query{}.
