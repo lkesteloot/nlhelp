@@ -10,22 +10,20 @@ let readEntries pathname =
     // Accumulate the entries as we go. We put the new line into the existing
     // head of the list. We set the question in the head if it's a question line.
     // If the list already has a question, then we start a new entry.
-    let parseEntries entries (line:string) =
+    let parseLine entries (line:string) =
         let question =
             if (line.StartsWith("# "))
                 then (line.Substring(2))
                 else ""
         match entries with
-        | entry :: rest ->
-            if entry.question <> ""
-                then { question = question; answer = line; } :: entry :: rest
-                else { question = question; answer = line + "\n" + entry.answer; } :: rest
-        | [] -> [ { question = question; answer = line; } ]
+        | entry :: rest when entry.question = "" ->
+            { question = question; answer = line + "\n" + entry.answer; } :: rest
+        | _ -> { question = question; answer = line; } :: entries
 
     System.IO.File.ReadLines(pathname)
         |> List.ofSeq
         |> List.rev
-        |> List.fold parseEntries []
+        |> List.fold parseLine []
 
 // Removes all questions and answers from the database.
 let clearDatabase (dbcon:IDbConnection) =
