@@ -2,7 +2,6 @@
 To do:
 
 - Look up question in search.
-    - Return DB answer.
     - Convert DB to Markdown.
     - https://en.wikipedia.org/wiki/Tf%E2%80%93idf
 - Mess with nicer DB interface that uses query{}.

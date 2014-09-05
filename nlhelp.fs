@@ -96,25 +96,25 @@ module Search =
             @""", ""text"":""" + escapeJson response.Text + @"""}"
 
     // Handle queries to the /search URL.
-    let handleRequest dbcon query =
+    let handleRequest dbcon entries query =
         printfn "Query: %s" query
         let response = {
             Query = query
-            Text = "# Official answer\nYou are clearly *stupid*."
+            Text = (List.head entries).answer
         }
         (200, "application/json", makeJsonSearchResponse response)
 
 module Website =
     // Handle GET requests.
-    let private handleGetRequest dbcon (req:HttpListenerRequest) =
+    let private handleGetRequest dbcon entries (req:HttpListenerRequest) =
         match stripQuery req.RawUrl with
-        | "/search" -> Search.handleRequest dbcon (notNullString (req.QueryString.Get("q")))
+        | "/search" -> Search.handleRequest dbcon entries (notNullString (req.QueryString.Get("q")))
         | path -> Static.handleRequest path
 
     // Generic request handler.
-    let handleRequest dbcon (req:HttpListenerRequest) =
+    let handleRequest dbcon entries (req:HttpListenerRequest) =
         match req.HttpMethod.ToUpper() with
-        | "GET" -> handleGetRequest dbcon req
+        | "GET" -> handleGetRequest dbcon entries req
         | _ -> (405, "text/plain", "Method not allowed")
 
 module Http =
@@ -146,9 +146,9 @@ module Http =
         printfn "Listening on %s" host
 
     // Listen for requests and create a response.
-    let listener dbcon req resp =
+    let listener dbcon entries req resp =
         async {
-            let statusCode, contentType, body = Website.handleRequest dbcon req
+            let statusCode, contentType, body = Website.handleRequest dbcon entries req
             printfn "%d %s %s" statusCode contentType req.RawUrl
             if statusCode >= 300 && statusCode < 400
                 then redirectTo resp body
@@ -160,7 +160,7 @@ let main argv =
     let dbcon = Db.makeConnection
     let entries = loadEntries dbcon
     printfn "Read %d entries." (List.length entries)
-    Http.registerListener (Http.listener dbcon)
+    Http.registerListener (Http.listener dbcon entries)
     printfn "Press <ENTER> to quit."
     Console.ReadLine() |> ignore
     dbcon.Close()
