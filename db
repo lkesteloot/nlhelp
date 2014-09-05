@@ -1,233 +1,227 @@
 # What problem does OurGroceries solve?
 
-<p>OurGroceries lets you keep a single set of grocery lists for your family or
+OurGroceries lets you keep a single set of grocery lists for your family or
 household. Everyone can edit these lists on their mobile phone or web browser. Whenever
-anyone modifies a list, everyone else sees the changes right away.</p>
+anyone modifies a list, everyone else sees the changes right away.
 
-<p>For example, you might be at work and remember that you're out of
+For example, you might be at work and remember that you're out of
 coffee. You use the OurGroceries application on your mobile phone to add
 it to the list. If your partner happens to go to the store later that day,
 they'll see the new item on their mobile phone and pick up some coffee.
 Once they do so, they can cross it off the list and it will be
-crossed off on your list too, automatically.</p>
+crossed off on your list too, automatically.
 
 # How much does OurGroceries cost?
 
-<p>OurGroceries is free! We show unobtrusive ads at the top of the
-screen to help pay for development costs.</p>
+OurGroceries is free! We show unobtrusive ads at the top of the
+screen to help pay for development costs.
 
 # Can I pay to get rid of the ads?
 
-<p>You can get rid of the ads and support development of OurGroceries by upgrading
-to OurGroceries+:</p>
+You can get rid of the ads and support development of OurGroceries by upgrading
+to OurGroceries+:
 
-<ul>
-<li>On iPhone this is an in-app purchase. Run OurGroceries, go to "Settings",
-and select "Turn Off Ads".</li>
-<li>On Android this is a separate app, called "OurGroceries Key", that you
-install. The Key has no interface. Its existence on your phone causes
-OurGroceries to stop showing ads. To install the Key, run OurGroceries,
-pop up the menu, select "Settings", and select
-"Turn Off Ads".</li>
-</ul>
+- On iPhone this is an in-app purchase. Run OurGroceries, go to "Settings",
+  and select "Turn Off Ads".
+- On Android this is a separate app, called "OurGroceries Key", that you
+  install. The Key has no interface. Its existence on your phone causes
+  OurGroceries to stop showing ads. To install the Key, run OurGroceries,
+  pop up the menu, select "Settings", and select
+  "Turn Off Ads".
 
 # Must I purchase an upgrade for each device I own?
 
-<p>The upgrade (see previous question) is associated with the iTunes or
+The upgrade (see previous question) is associated with the iTunes or
 Google account you use to buy it. If two devices uses the same iTunes
 account or the same Google account, the second purchase will be free. If
 the second purchase is on a phone with a different account, then it must be
-paid for again. This is the way all apps work in mobile app stores.</p>
+paid for again. This is the way all apps work in mobile app stores.
 
 # What devices is OurGroceries available for?
 
-<p>OurGroceries is available for the following devices:</p>
+OurGroceries is available for the following devices:
 
-<ul>
-<li>iPhone&reg;, iPad&reg;, and iPod touch&reg; running iOS 6.0 or newer.</li>
-<li>Any Android&trade;-powered device running Android version 2.3 or newer.</li>
-<li>Most PC web browsers (<a href="/your-lists/">try it now</a>!).</li>
-</ul>
+- iPhone&reg;, iPad&reg;, and iPod touch&reg; running iOS 6.0 or newer.
+- Any Android&trade;-powered device running Android version 2.3 or newer.
+- Most PC web browsers ([try it now](/your-lists/)!).
 
-<p>Visit our <a href="download">download page</a> to download OurGroceries.</p>
+Visit our [download page](download) to download OurGroceries.
 
 # Will you make a version for Microsoft Windows Phone 8?
 
-<p>While we do not currently support Windows Phone 8 devices,
+While we do not currently support Windows Phone 8 devices,
 we are watching the market share numbers. When the mobile platform becomes popular
-enough, we will likely create an OurGroceries app for it.</p>
+enough, we will likely create an OurGroceries app for it.
 
 # How do I get OurGroceries?
 
-<p>Please see our <a href="download">download page</a> for instructions. You can
-also see and edit <a href="/your-lists/">Your Lists</a> online.</p>
+Please see our [download page](download) for instructions. You can
+also see and edit [Your Lists](/your-lists/) online.
 
 # How do I change my master email address?
 
-<p>If your personal email address has changed and you want to use your new email
+If your personal email address has changed and you want to use your new email
 address in OurGroceries, go to the Settings screen on the OurGroceries mobile
 application, pick List Sharing, and enter your new email address. You'll
-receive a confirmation email from us with a link, and you should click on that link.</p>
+receive a confirmation email from us with a link, and you should click on that link.
 
-<p>A new account will be created
+A new account will be created
 and it will include all of your existing lists. If you're using OurGroceries 
 to share lists between several mobile devices, do the above on all devices. After
 having done that, use your
 new email address when signing in to the website. You'll have to set your password
 again there, because that's not copied from your old account. Your old account
-won't be deleted, but will be dormant.</p>
+won't be deleted, but will be dormant.
 
 # Do I have to type in the full grocery item name each time?
 
-<p>No, OurGroceries keeps track of the items you've entered before and
+No, OurGroceries keeps track of the items you've entered before and
 lets you search through them when adding an item. You can remove items
 from this list if you no longer want them to show up. OurGroceries automatically
 shows you the best matches as you type an item's name, so you'll
-rarely have to type more than the first letter or two.</p>
+rarely have to type more than the first letter or two.
 
 # How do I delete an item from the master list?
 
-<p>The master list (the list of all the items you've ever entered;
+The master list (the list of all the items you've ever entered;
 see previous question) is displayed when you add an item to a grocery list.
 If there's an item that you want removed from the master list, tap
-the "X" icon at the right of the row.</p>
+the "X" icon at the right of the row.
 
 # Can OurGroceries keep track of multiple shopping lists?
 
-<p>Yes! You can have one list for each store (Safeway, Costco, Home Depot),
+Yes! You can have one list for each store (Safeway, Costco, Home Depot),
 one list for each type of store (hardware store, drugstore, butcher), and
 even lists for things not related to shopping (to do, questions for the
 pediatrician). All lists are shared amongst household members and are updated
-automatically within seconds.</p>
+automatically within seconds.
 
 # Can OurGroceries keep track of recipes?
 
-<p>Yes! You can keep track of recipes that you prepare often, along with their
+Yes! You can keep track of recipes that you prepare often, along with their
 main ingredients. You can use this list to inspire you next time
 you have to make a dinner decision and can't remember which dishes you
 haven't made in a while. The recipes don't include the instructions or
 minor ingredients (such as water or salt), just the key
 ingredients, so that you can quickly check which ones you already have
-and easily add the rest to your grocery list.</p>
+and easily add the rest to your grocery list.
 
 # How do I rename or delete a shopping list or recipe?
 
-<p>On iPhone, iPad, and iPod touch: While on the top-level list of lists, tap the information
-icon at the right of the list you want to rename or delete.</p>
+On iPhone, iPad, and iPod touch: While on the top-level list of lists, tap the information
+icon at the right of the list you want to rename or delete.
 
-<p>On Android: While in the shopping list or recipe itself, tap the phone's menu button.
-The menu contains options to rename or delete the list.</p>
+On Android: While in the shopping list or recipe itself, tap the phone's menu button.
+The menu contains options to rename or delete the list.
 
 # Does OurGroceries allow you to change the order of items in the list or categorize them?
 
-<p>Yes! As of version 2.0 on all platforms and the web interface you can
+Yes! As of version 2.0 on all platforms and the web interface you can
 drag items around your shopping lists to change their order. You can also
 create categories or aisles and drag items into them to make shopping
 faster and easier. OurGroceries will remember the order and categories of
 items so that next time you create a shopping list the items will already
-be in the order you like to walk through the store.</p>
+be in the order you like to walk through the store.
 
 # Can OurGroceries keep a backup of my grocery list in case my phone crashes?
 
-<p>Yes! OurGroceries keeps your lists backed up on our servers as
+Yes! OurGroceries keeps your lists backed up on our servers as
 part of its ability to share lists between the members of
 your household.  In order to make use of this feature, you'll need to enter your email
 address in the List Sharing section of the Settings screen, and then click through on the confirmation
 email that you'll receive.  As long as your phone can get an Internet connection
-(occasionally) when you're using OurGroceries, it will keep the lists backed up.</p>
+(occasionally) when you're using OurGroceries, it will keep the lists backed up.
 
-<p>Later, if your phone crashes, or you buy a new one, or upgrade to another phone,
+Later, if your phone crashes, or you buy a new one, or upgrade to another phone,
 you can just install OurGroceries, enter the same email address in the List Sharing section of the 
 Settings screen, click through on the confirmation email you'll receive, and
-your lists and items will be automatically restored from our servers.</p>
+your lists and items will be automatically restored from our servers.
 
 # I accidentally crossed an item off the list. Can I undo that to bring the item back?
 
-<p>There's no undo mechanism, but the crossed-off items are ordered
+There's no undo mechanism, but the crossed-off items are ordered
 so that the most recently crossed-off items are at the bottom. You can
 scroll to the bottom of the list and tap the item to bring it back to the
-list.</p>
+list.
 
 # How can I move an item to a different list?
 
-<p>Tap the right-facing arrow at the right of the item you want to move. This will
+Tap the right-facing arrow at the right of the item you want to move. This will
 show the item details screen, where you can rename the item, change its quantities,
-delete it, change its category, and move it to a different list.</p>
+delete it, change its category, and move it to a different list.
 
 # Can I import or export my lists and items?
 
-<p>You can import lists on our website by using the "Import Items" button
+You can import lists on our website by using the "Import Items" button
 at the top of a shopping list or recipe. There's currently no way to export
-lists, but as a work-around you can email yourself a shopping list or recipe.</p>
+lists, but as a work-around you can email yourself a shopping list or recipe.
 
 # Can OurGroceries add items by scanning barcodes?
 
-<p>We currently support barcode scanning on the Android client. The other clients
-will get this feature soon.</p>
+We currently support barcode scanning on the Android client. The other clients
+will get this feature soon.
 
 # Can OurGroceries keep track of prices?
 
-<p>We've had several requests for price tracking, and it's on our list of features
-to add in a future update.</p>
+We've had several requests for price tracking, and it's on our list of features
+to add in a future update.
 
 # Can I keep some lists private?
 
-<p>We've had several requests for keeping some lists private, and it's
-on our list of features to add in a future update.</p>
+We've had several requests for keeping some lists private, and it's
+on our list of features to add in a future update.
 
 # I'm having problems running OurGroceries on my BlackBerry.
 
-<p>Sorry, we no longer support the BlackBerry platform.</p>
+Sorry, we no longer support the BlackBerry platform.
 
 # My partner and I installed OurGroceries. Why are we seeing different lists?
 
-<p>You must associate the two phones together. To do this, go to the List Sharing section of the Settings screen:</p>
-<ul>
-<li>On iPhone, iPad, and iPod touch, return to the main lists screen
-(tap the Lists button in the upper-left corner), and then press the
-gears button. Then choose "List sharing".</li>
-<li>On Android, press the Menu key, and select Settings.
-Then choose "List sharing".</li>
-</ul>
-<p>Once you're at the List Sharing screen, enter your email address, and press Send.
+You must associate the two phones together. To do this, go to the List Sharing section of the Settings screen:
+
+- On iPhone, iPad, and iPod touch, return to the main lists screen
+  (tap the Lists button in the upper-left corner), and then press the
+  gears button. Then choose "List sharing".
+- On Android, press the Menu key, and select Settings.
+  Then choose "List sharing".
+
+Once you're at the List Sharing screen, enter your email address, and press Send.
 You'll receive a confirmation email with a link.
 (Check your spam or bulk email folder for the confirmation email, as these
 types of automated emails are often mis-classified as spam.) Click
 on the link in the confirmation email to associate your mobile device with that email
-address.</p>
+address.
 
-<p>Then, on your partner's device, do the same thing,
-<em>still using your own email address</em>.
-<b>You must use the same email address for both phones.</b> By associating both
+Then, on your partner's device, do the same thing,
+*still using your own email address*.
+**You must use the same email address for both phones.** By associating both
 phones with the same email address you link them up, causing the lists to
 become synchronized. If you both already had items on your lists, they will
-be merged to create new shared lists.</p>
+be merged to create new shared lists.
 
 # Why are the website's shopping lists different from those on my mobile phone?
 
-<p>You must associate OurGroceries on your mobile phone with your web account:</p>
+You must associate OurGroceries on your mobile phone with your web account:
 
-<ul>
-<li>If you've already entered an email address into OurGroceries on your mobile phone
-(<i>e.g.,</i> to share with your partner's phone), then you must enter that
-same email address when signing in to "<a href="/your-lists/">Your Lists</a>"
-on the web site.</li>
-<li>If you've never entered an email address into OurGroceries on your phone, then set up
-List Sharing now using the same email address that you used on the web. See <a
-href="#different_lists">above</a> for instructions.</li>
-</ul>
+- If you've already entered an email address into OurGroceries on your mobile phone
+  (*e.g.,* to share with your partner's phone), then you must enter that
+  same email address when signing in to "[Your Lists](/your-lists/)"
+  on the web site.
+- If you've never entered an email address into OurGroceries on your phone, then set up
+  List Sharing now using the same email address that you used on the web. See
+  [the FAQ](/faq#different_lists) for instructions.
 
-<p>Remember to use the <em>same email address</em> for all your mobile devices and for
+Remember to use the *same email address* for all your mobile devices and for
 the web interface. It's what ties them all together and lets them synchronize with
-one another.</p>
+one another.
 
 # I followed the instructions. Why didn't I receive a confirmation email?
 
-<p>These types of automated emails often get mis-classified as spam. We've seen
+These types of automated emails often get mis-classified as spam. We've seen
 problems with both Yahoo and Gmail. Check your spam folder for the
-confirmation email.</p>
+confirmation email.
 
-<p>Sometimes the Yahoo bulk-email folder is configured to delete spam immediately.
+Sometimes the Yahoo bulk-email folder is configured to delete spam immediately.
 If your spam folder is empty, do the following: Click "Options" in the
 upper-right, then "Mail Options" in the drop-down menu, then "Spam"
 in the left-hand
@@ -235,46 +229,46 @@ pane. Look at the "Empty Spam folder" option. Make sure it's set to
 anything other
 than "immediately", then click "Save Changes" at the top.
 You'll need to ask OurGroceries to send you the confirmation email again
-(see next paragraph).</p>
+(see next paragraph).
 
-<p>To send the confirmation email again, launch OurGroceries, go to the Settings screen, and
-press the Send button.</p>
+To send the confirmation email again, launch OurGroceries, go to the Settings screen, and
+press the Send button.
 
 # How do I stop sharing the list with my partner?
 
-<p>Either of you can go to the List Sharing section of the Settings screen
+Either of you can go to the List Sharing section of the Settings screen
 (see above answer) and blank out the email address, then press the Send
 button. You will both keep any existing items and shopping lists, as well
 as recipes you may have created, but the lists will no longer be
-synchronized.</p>
+synchronized.
 
-<p>If you're not in a position to ask your former partner to change their
+If you're not in a position to ask your former partner to change their
 OurGroceries settings, and if you want to share yours with someone new, then
 pick a new email address for your new partnership. This can be your new partner's
 email address. If you use Gmail, then you can create a new address by appending
-a plus sign. For example, if you used <tt>example@gmail.com</tt> to share with
-your previous partner, you can use <tt>example+ourgroceries@gmail.com</tt> to share with
+a plus sign. For example, if you used `example@gmail.com` to share with
+your previous partner, you can use `example+ourgroceries@gmail.com` to share with
 your new partner. The emails will still be delivered to your inbox, but OurGroceries
-will consider it a new address for pairing purposes.</p>
+will consider it a new address for pairing purposes.
 
-<p>If neither of the above solutions can work for you, then please
-<a href="mailto:support@ourgroceries.com">send us an email</a> with the email address
+If neither of the above solutions can work for you, then please
+[send us an email](mailto:support@ourgroceries.com) with the email address
 you're using for your account and the first name of the person you'd like
-removed.</p>
+removed.
 
 # How do I transfer my lists to my new phone?
 
-<p>First, be sure that your old phone (the one with OurGroceries installed
+First, be sure that your old phone (the one with OurGroceries installed
 and your lists on it) is signed in to your OurGroceries account. Do this by
-launching OurGroceries, going to <b>Settings</b>, then <b>List sharing</b>. If you see
+launching OurGroceries, going to **Settings**, then **List sharing**. If you see
 "You are not currently sharing grocery lists," then enter your email address.
 You'll get an email at that address, and you must click the link in the email
 to confirm that you want this email address associated with your lists.
-Verify on the app's <b>List sharing</b> screen that your email
-has been accepted.</p>
+Verify on the app's **List sharing** screen that your email
+has been accepted.
 
-<p>Then, on your new phone, repeat the above procedure with the same email address.</p>
+Then, on your new phone, repeat the above procedure with the same email address.
 
-<p>As a bonus, now that your email address is associated with your lists, you
-can use our website's <a href="/your-lists/">Your Lists</a> section to view
-and modify your lists!</p>
+As a bonus, now that your email address is associated with your lists, you
+can use our website's [Your Lists](/your-lists/) section to view
+and modify your lists!
