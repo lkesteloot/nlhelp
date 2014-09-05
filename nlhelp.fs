@@ -4,9 +4,16 @@ open System
 open System.Net
 open System.Text
 open System.IO
+open System.Data
 
 let staticRoot = @"static"
 let host = "http://localhost:8080/"
+
+// Represents an entry and all associated data.
+type Entry = {
+    question : string
+    answer : string
+}
 
 // Converts a null string to an empty string.
 let notNullString = function
@@ -33,6 +40,16 @@ let stripQuery (path:string) =
 let handleRedirection path =
     printfn "Redirecting to %s" path
     (int HttpStatusCode.Redirect, "", path)
+
+// Loads all entries from the database and returns a list of Entry objects.
+let loadEntries (dbcon:IDbConnection) =
+    let dbcmd = dbcon.CreateCommand()
+    dbcmd.CommandText <- "SELECT question_text, answer_text
+                          FROM question JOIN answer ON question.answer_id = answer.id"
+    let decodeRow (row:IDataRecord) = { question = row.GetString(0); answer = row.GetString(1); }
+    Db.readerAsSeq (dbcmd.ExecuteReader())
+        |> Seq.map decodeRow
+        |> Seq.toList
 
 // Handling of static files.
 module Static =
@@ -141,7 +158,10 @@ module Http =
 [<EntryPoint>]
 let main argv =
     let dbcon = Db.makeConnection
+    let entries = loadEntries dbcon
+    printfn "Read %d entries." (List.length entries)
     Http.registerListener (Http.listener dbcon)
+    printfn "Press <ENTER> to quit."
     Console.ReadLine() |> ignore
     dbcon.Close()
     0

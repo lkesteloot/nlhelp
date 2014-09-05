@@ -7,6 +7,15 @@ open System
 open System.Data
 open Npgsql
 
+// Converts a data reader to a sequence of IDataRecord objects.
+// Closes the reader when done.
+let readerAsSeq (reader:IDataReader) =
+    seq {
+        // Auto-close.
+        use closingReader = reader
+        while closingReader.Read() do yield closingReader :> IDataRecord
+    }
+
 let executeCommand (dbcon:IDbConnection) command =
     let dbcmd = dbcon.CreateCommand()
     dbcmd.CommandText <- command
