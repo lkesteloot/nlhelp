@@ -7,23 +7,25 @@ type Entry = { question : string; answer : string; }
 
 // Returns a list of Entry objects.
 let readEntries pathname =
-    // Accumulate the entries as we go. We put the new line into the existing
-    // head of the list. We set the question in the head if it's a question line.
-    // If the list already has a question, then we start a new entry.
+    // Accumulate the entries as we go. If it's a new question, we prepend a new
+    // entry. Otherwise we just add the line to the existing head.
     let parseLine entries (line:string) =
-        let question =
-            if (line.StartsWith("# "))
-                then (line.Substring(2))
-                else ""
-        match entries with
-        | entry :: rest when entry.question = "" ->
-            { question = question; answer = line + "\n" + entry.answer; } :: rest
-        | _ -> { question = question; answer = line; } :: entries
+        if (line.StartsWith("# "))
+            then
+                // New question.
+                let question = (line.Substring(2))
+                { question = question; answer = line; } :: entries
+            else
+                // Append to existing question.
+                match entries with
+                | entry :: rest ->
+                    { question = entry.question; answer = entry.answer + "\n" + line; } :: rest
+                | _ -> [] // Junk at the beginning of the document.
 
     System.IO.File.ReadLines(pathname)
         |> List.ofSeq
-        |> List.rev
         |> List.fold parseLine []
+        |> List.rev
 
 // Removes all questions and answers from the database.
 let clearDatabase (dbcon:IDbConnection) =

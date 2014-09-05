@@ -1,8 +1,8 @@
 
 To do:
 
-- Look up question in search.
-    - https://en.wikipedia.org/wiki/Tf%E2%80%93idf
+- Return multiple answers, ranked.
+- After getting the answer, select the text field.
 - Mess with nicer DB interface that uses query{}.
     - http://www.mono-project.com/docs/database-access/providers/postgresql/
     - http://fsprojects.github.io/SQLProvider/

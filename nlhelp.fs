@@ -13,6 +13,8 @@ let host = "http://localhost:8080/"
 type Entry = {
     question : string
     answer : string
+    words : string list
+    wordCount : int
 }
 
 // Converts a null string to an empty string.
@@ -46,7 +48,16 @@ let loadEntries (dbcon:IDbConnection) =
     let dbcmd = dbcon.CreateCommand()
     dbcmd.CommandText <- "SELECT question_text, answer_text
                           FROM question JOIN answer ON question.answer_id = answer.id"
-    let decodeRow (row:IDataRecord) = { question = row.GetString(0); answer = row.GetString(1); }
+    let decodeRow (row:IDataRecord) =
+        let question = row.GetString(0)
+        let answer = row.GetString(1)
+        let words = Nlp.wordsInString question
+        {
+            question = question
+            answer = answer
+            words = words
+            wordCount = List.length words
+        }
     Db.readerAsSeq (dbcmd.ExecuteReader())
         |> Seq.map decodeRow
         |> Seq.toList
@@ -95,12 +106,50 @@ module Search =
         @"{""query"":""" + escapeJson response.Query +
             @""", ""text"":""" + escapeJson response.Text + @"""}"
 
+    // Returns whether the entry question contains the given term.
+    let containsTerm word entry = List.exists ((=) word) entry.words
+
+    // Compute the IDF for a given word.
+    let computeIdf entries word =
+        let numerator = List.length entries
+        let denominator =
+            entries
+                |> List.filter (containsTerm word)
+                |> List.length
+        if denominator = 0 then 0.0 else log (float numerator / float denominator)
+
+    // Compute a rating for an entry and a word. Higher is better. Returns
+    // the rating.
+    let rateEntryForWord entry (word, idf) =
+        let countInDoc = entry.words |> List.filter ((=) word) |> List.length
+        let tf = float countInDoc / float entry.wordCount
+        tf*idf
+
+    // Compute a rating for an entry given a set of query words. Higher is
+    // better. Returns an (entry,rating) tuple.
+    let rateEntry wordsAndIdfs entry =
+        let rating = List.sumBy (rateEntryForWord entry) wordsAndIdfs
+        (entry, rating)
+
+    // Pick the best entry for the given query.
+    let pickBestEntry entries query =
+        let queryWords = Nlp.wordsInString query
+        let idfs = List.map (computeIdf entries) queryWords
+        let wordsAndIdfs = List.zip queryWords idfs
+        entries
+            |> List.map (rateEntry wordsAndIdfs)
+            |> List.sortBy (fun (_, rating) -> rating)
+            |> List.map (fun (entry, _) -> entry)
+            |> List.rev
+            |> List.head
+
     // Handle queries to the /search URL.
     let handleRequest dbcon entries query =
         printfn "Query: %s" query
+        let entry = pickBestEntry entries query
         let response = {
             Query = query
-            Text = (List.head entries).answer
+            Text = entry.answer
         }
         (200, "application/json", makeJsonSearchResponse response)
 
