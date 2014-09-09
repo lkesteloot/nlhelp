@@ -1,7 +1,18 @@
 
 To do:
 
-- Return multiple answers, ranked.
+- Show score in answer for debugging.
+- Should we take the answer into account too, when searching?
+- Different TF-IDF:
+    - https://class.coursera.org/nlp/lecture/186
+        - TF = (1 + log10 termCOUNT)?
+        - IDF = log10 N/docCount
+        - Only include terms both in query and doc? Does that happen automatically?
+    - http://pyevolve.sourceforge.net/wordpress/?p=1747
+    - https://www.cs.rutgers.edu/~mlittman/courses/ml03/iCML03/papers/ramos.pdf
+- Make H1 smaller in question.
+- Get rid of things like "previous question" in answers. Or link to FAQ.
+- If scores are all 0, then say so.
 - After getting the answer, select the text field.
 - Mess with nicer DB interface that uses query{}.
     - http://www.mono-project.com/docs/database-access/providers/postgresql/

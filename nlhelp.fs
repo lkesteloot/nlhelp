@@ -97,14 +97,22 @@ module Static =
 // Handling of search requests.
 module Search =
     type SearchResponse = {
-        Query: string
-        Text: string
+        query: string
+        hits: Entry seq
     }
 
-    // Convert a response to JSON.
+    // Convert an Entry object to JSON.
+    let makeJsonEntry entry =
+        @"{""answer"":""" + escapeJson entry.answer + @"""}"
+
+    // Convert a search response to JSON.
     let makeJsonSearchResponse (response:SearchResponse) =
-        @"{""query"":""" + escapeJson response.Query +
-            @""", ""text"":""" + escapeJson response.Text + @"""}"
+        let entriesJson =
+            response.hits
+                |> Seq.map makeJsonEntry
+                |> String.concat ", "
+        @"{""query"":""" + escapeJson response.query +
+            @""", ""entries"":[" + entriesJson + @"]}"
 
     // Returns whether the entry question contains the given term.
     let containsTerm word entry = List.exists ((=) word) entry.words
@@ -131,8 +139,8 @@ module Search =
         let rating = List.sumBy (rateEntryForWord entry) wordsAndIdfs
         (entry, rating)
 
-    // Pick the best entry for the given query.
-    let pickBestEntry entries query =
+    // Return the best "limit" entries for the given query.
+    let findBestEntries entries query limit =
         let queryWords = Nlp.wordsInString query
         let idfs = List.map (computeIdf entries) queryWords
         let wordsAndIdfs = List.zip queryWords idfs
@@ -141,15 +149,15 @@ module Search =
             |> List.sortBy (fun (_, rating) -> rating)
             |> List.map (fun (entry, _) -> entry)
             |> List.rev
-            |> List.head
+            |> Seq.ofList
+            |> Seq.truncate limit
 
     // Handle queries to the /search URL.
     let handleRequest dbcon entries query =
         printfn "Query: %s" query
-        let entry = pickBestEntry entries query
         let response = {
-            Query = query
-            Text = entry.answer
+            query = query
+            hits = findBestEntries entries query 10
         }
         (200, "application/json", makeJsonSearchResponse response)
 
