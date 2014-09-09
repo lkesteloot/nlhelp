@@ -7,7 +7,8 @@
         $hits.empty();
         for (var i = 0; i < hits.length; i++) {
             var hit = hits[i];
-            $("<p>").addClass("answer").html(markdown.toHTML(hit.answer)).appendTo($hits);
+            var $p = $("<p>").addClass("answer").html(markdown.toHTML(hit.answer)).appendTo($hits);
+            var $score = $("<div>").addClass("score").text(hit.score).appendTo($p);
         }
     };
 

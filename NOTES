@@ -1,7 +1,6 @@
 
 To do:
 
-- Show score in answer for debugging.
 - Should we take the answer into account too, when searching?
 - Different TF-IDF:
     - https://class.coursera.org/nlp/lecture/186

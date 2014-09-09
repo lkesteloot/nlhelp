@@ -17,6 +17,12 @@ type Entry = {
     wordCount : int
 }
 
+// Represents an entry that has been scored.
+type ScoredEntry = {
+    entry : Entry
+    score: float
+}
+
 // Converts a null string to an empty string.
 let notNullString = function
     | null -> ""
@@ -98,18 +104,19 @@ module Static =
 module Search =
     type SearchResponse = {
         query: string
-        hits: Entry seq
+        hits: ScoredEntry seq
     }
 
-    // Convert an Entry object to JSON.
-    let makeJsonEntry entry =
-        @"{""answer"":""" + escapeJson entry.answer + @"""}"
+    // Convert an ScoredEntry object to JSON.
+    let makeJsonScoredEntry scoredEntry =
+        @"{""answer"":""" + escapeJson scoredEntry.entry.answer +
+            @""", ""score"":" + (sprintf "%f" scoredEntry.score) + "}"
 
     // Convert a search response to JSON.
     let makeJsonSearchResponse (response:SearchResponse) =
         let entriesJson =
             response.hits
-                |> Seq.map makeJsonEntry
+                |> Seq.map makeJsonScoredEntry
                 |> String.concat ", "
         @"{""query"":""" + escapeJson response.query +
             @""", ""entries"":[" + entriesJson + @"]}"
@@ -126,18 +133,21 @@ module Search =
                 |> List.length
         if denominator = 0 then 0.0 else log (float numerator / float denominator)
 
-    // Compute a rating for an entry and a word. Higher is better. Returns
-    // the rating.
-    let rateEntryForWord entry (word, idf) =
+    // Compute a score for an entry and a word. Higher is better. Returns
+    // the score.
+    let scoreEntryForWord entry (word, idf) =
         let countInDoc = entry.words |> List.filter ((=) word) |> List.length
         let tf = float countInDoc / float entry.wordCount
         tf*idf
 
-    // Compute a rating for an entry given a set of query words. Higher is
-    // better. Returns an (entry,rating) tuple.
+    // Compute a score for an entry given a set of query words. Higher is
+    // better. Returns a ScoredEntry object.
     let rateEntry wordsAndIdfs entry =
-        let rating = List.sumBy (rateEntryForWord entry) wordsAndIdfs
-        (entry, rating)
+        let score = List.sumBy (scoreEntryForWord entry) wordsAndIdfs
+        {
+            entry = entry
+            score = score
+        }
 
     // Return the best "limit" entries for the given query.
     let findBestEntries entries query limit =
@@ -146,8 +156,8 @@ module Search =
         let wordsAndIdfs = List.zip queryWords idfs
         entries
             |> List.map (rateEntry wordsAndIdfs)
-            |> List.sortBy (fun (_, rating) -> rating)
-            |> List.map (fun (entry, _) -> entry)
+            |> List.filter (fun scoredEntry -> scoredEntry.score > 0.0)
+            |> List.sortBy (fun scoredEntry -> scoredEntry.score)
             |> List.rev
             |> Seq.ofList
             |> Seq.truncate limit
