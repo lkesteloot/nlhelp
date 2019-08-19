@@ -13,6 +13,7 @@ To do:
 - Get rid of things like "previous question" in answers. Or link to FAQ.
 - If scores are all 0, then say so.
 - After getting the answer, select the text field.
+- Select text field when page comes up.
 - Mess with nicer DB interface that uses query{}.
     - http://www.mono-project.com/docs/database-access/providers/postgresql/
     - http://fsprojects.github.io/SQLProvider/
